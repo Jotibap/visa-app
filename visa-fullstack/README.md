@@ -4,7 +4,7 @@ This repository is the separated full-stack migration of the uploaded Visa Porta
 
 ## Technology stack
 
-- **Frontend:** React 19, Vite, Axios, Lucide icons
+- **Frontend:** React 19, Vite, Axios
 - **Backend:** Java 21, Spring Boot 3.4, Spring Security, JWT, Spring Data JPA
 - **Database:** PostgreSQL 16, Hibernate JSONB fields
 - **AI:** Existing Google Gemini `generateContent` API flow, invoked only by the backend
@@ -134,27 +134,4 @@ Sign out and sign back in. Admin access also requires a verified email when SMTP
 
 Section slugs: `visa-details`, `personal-details`, `passport-details`, `address-details`, `security-declaration`.
 
-## Data model
-
-`users` stores accounts, role and email-verification state. `applications` stores the owner, status, timestamps, AI findings, summary and admin feedback/notes. The five form sections are stored as PostgreSQL `jsonb` columns (`visa_details`, `personal_details`, `passport_details`, `address_details`, `security_declaration`) so the original section field names remain intact. `action_tokens` stores expiring email-verification and password-reset tokens.
-
-## Legacy source reference
-
-- `migration-reference/legacy-react-pages/` retains the original React/Inertia pages, components, layouts and hooks for visual/behavior comparison.
-- `migration-reference/legacy-laravel/` retains the original Laravel controllers, models, validation requests, routes, migrations and AI service for migration traceability.
-
-The running app does not depend on Laravel, PHP, Inertia or Ziggy.
-
-## Data migration from an existing deployment
-
-The uploaded archive contains application source code but no live production database dump or user-upload directory. Therefore, this project creates a new PostgreSQL schema; it does not invent or silently migrate user records. Before replacing a live system, export the existing `users`, `applications` and five detail tables, map them to the JSONB columns described above, copy uploaded files into the matching `uploads/application-{id}` directories, and verify record counts and file access.
-
-## Security and production checklist
-
-- Rotate any API key that was present in the uploaded source archive. Never commit `.env` files.
-- Set a unique strong `JWT_SECRET` and strong PostgreSQL credentials.
-- Enable SMTP and email verification in production.
-- Keep uploads on private storage; the API does not expose `/uploads/**` as public static content.
-- Add malware scanning, backup/restore tests, audit logs, rate limiting, monitoring and a reviewed retention policy before production use.
-- Replace Hibernate `ddl-auto: update` with managed Flyway/Liquibase migrations for production deployments.
-- Validate AI results with human review; do not use the AI risk label as an automated visa decision.
+man review; do not use the AI risk label as an automated visa decision.
