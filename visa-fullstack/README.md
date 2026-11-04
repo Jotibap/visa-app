@@ -10,7 +10,6 @@ This repository is the separated full-stack migration of the uploaded Visa Porta
 - **AI:** Existing Google Gemini `generateContent` API flow, invoked only by the backend
 - **Deployment:** Docker Compose (PostgreSQL, API, frontend)
 
-## Features migrated
 
 ### Applicant
 - Registration and login
