@@ -1,0 +1,43 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/visa_app}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:0000}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+  servlet:
+    multipart:
+      max-file-size: 12MB
+      max-request-size: 30MB
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+server:
+  port: ${PORT:8080}
+app:
+  frontend-url: ${FRONTEND_URL:http://visa-ai.com}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:no-reply@visa-portal.local}
+  jwt:
+    secret: ${JWT_SECRET:ehgCEb7zAWBNAssYCej9knidSbBY+3hBLMsk9Duv0Nw=}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  upload-dir: ${UPLOAD_DIR:./uploads}
+  ai:
+    api-key: ${AI_SERVICE_API_KEY}
+    model: ${GEMINI_MODEL_VISION:gemini-3.8-flash}

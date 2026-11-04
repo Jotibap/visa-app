@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: visa-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: visa_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+    ports: ["5432:5432"]
+    volumes: ["visa_postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d visa_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  backend:
+    build: ./backend
+    container_name: visa-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/visa_app
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      JWT_SECRET: ${JWT_SECRET:-replace-this-with-a-long-random-secret-before-use-123456}
+      AI_SERVICE_API_KEY: ${AI_SERVICE_API_KEY:-}
+      GEMINI_MODEL_VISION: ${GEMINI_MODEL_VISION:-gemini-1.5-pro-latest}
+      UPLOAD_DIR: /app/uploads
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      MAIL_ENABLED: ${MAIL_ENABLED:-false}
+      MAIL_HOST: ${MAIL_HOST:-localhost}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-no-reply@visa-portal.local}
+    ports: ["8080:8080"]
+    volumes: ["visa_uploads:/app/uploads"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8080/api
+    container_name: visa-frontend
+    restart: unless-stopped
+    ports: ["5173:80"]
+    depends_on: [backend]
+volumes:
+  visa_postgres_data:
+  visa_uploads:
